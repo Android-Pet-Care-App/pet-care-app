@@ -147,12 +147,13 @@ https://github.com/MNANDO/pet-care-app/assets/17109419/1ed74f68-067d-4bfc-becf-f
 
 [Add screenshot of your Project Board with three milestones visible in
 this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+<img src="https://github.com/MNANDO/pet-care-app/assets/17109419/fca44abc-d802-42de-9707-0ca6c50412c0" width=600>
+
 
 ## Issue cards
 
-- [Add screenshot of your Project Board with the issues that you've been working on for this unit's milestone] <img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
-- [Add screenshot of your Project Board with the issues that you're working on in the **NEXT sprint**. It should include issues for next unit with assigned owners.] <img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+- <img src="https://github.com/MNANDO/pet-care-app/assets/17109419/e8edbc69-9429-499c-bbd6-5459bdcec675" width=600>
+- <img src="https://github.com/MNANDO/pet-care-app/assets/17109419/88a4c752-9fe3-4fb2-9742-db462b432303" width=600>
 
 ## Issues worked on this sprint
 
