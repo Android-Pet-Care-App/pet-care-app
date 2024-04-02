@@ -1,6 +1,7 @@
 package com.example.petcareapp
 
 import android.os.Bundle
+import android.os.ProxyFileDescriptorCallback
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -42,29 +43,61 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppContent() {
+    var selectedItem by remember { mutableIntStateOf(0) }
     Scaffold(
-        bottomBar = { BottomNavigationBar() }
+        //bottomBar = { BottomNavigationBar(selectedItem,onItem) }
+        bottomBar = { BottomNavigationBar(selectedItem) { index -> selectedItem = index } }
     ) { innerPadding ->
-        BodyContent(Modifier.padding(innerPadding))
+        BodyContent(Modifier.padding(innerPadding),selectedItem)
     }
 }
 
 @Composable
-fun BodyContent(modifier: Modifier = Modifier) {
+fun ProfilePage(){
+    Column {
+        Greeting("Profile Page")
+        Greeting("BOB")
+    }
+}
+
+@Composable
+fun HomePage(){
+    Column {
+        Greeting("Home Page")
+        Greeting("Jones")
+    }
+}
+
+@Composable
+fun LabelPage(){
+    Column {
+        Greeting("Label Page")
+        Greeting("Couldn't find Paw Icon, So just put a random ICON")
+    }
+}
+
+
+@Composable
+fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int) {
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column {
-            Greeting("Android")
-            Greeting("BOB")
+        when(pageIndex){
+            0 -> ProfilePage()
+            1 -> HomePage()
+            2 -> LabelPage()
+            else -> {
+                Greeting("Error. Shouldn't Show this")
+            }
         }
     }
 }
 
 @Composable
-fun BottomNavigationBar() {
-    var selectedItem by remember { mutableIntStateOf(0) }
+fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
+//fun BottomNavigationBar(selectedItem: Int) {
+
     val items = listOf("Profile","Home", "Label")
 
     NavigationBar {
@@ -80,7 +113,8 @@ fun BottomNavigationBar() {
                 label = { Text(item) },
                 selected = selectedItem == index,
                 onClick = {
-                    selectedItem = index
+                    onItemSelected(index)
+                    // selectedItem = index
                     // Add your action here when a navigation item is selected
                 }
             )
