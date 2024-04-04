@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -69,7 +70,7 @@ fun HomePage(){
 }
 
 @Composable
-fun LabelPage(){
+fun PetsPage(){
     Column {
         Greeting("Label Page")
         Greeting("Couldn't find Paw Icon, So just put a random ICON")
@@ -86,7 +87,7 @@ fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int) {
         when(pageIndex){
             0 -> ProfilePage()
             1 -> HomePage()
-            2 -> LabelPage()
+            2 -> PetsPage()
             else -> {
                 Greeting("Error. Shouldn't Show this")
             }
@@ -96,10 +97,7 @@ fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int) {
 
 @Composable
 fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
-//fun BottomNavigationBar(selectedItem: Int) {
-
-    val items = listOf("Profile","Home", "Label")
-
+    val items = listOf("Profile","Home", "Pets")
     NavigationBar {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
@@ -107,7 +105,7 @@ fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
                     Icon(
                         if (index==0) Icons.Filled.Person
                         else if (index==1) Icons.Filled.Home
-                        else Icons.Filled.Face,
+                        else Icons.Filled.ShoppingCart,
                         contentDescription = item
                     )},
                 label = { Text(item) },
