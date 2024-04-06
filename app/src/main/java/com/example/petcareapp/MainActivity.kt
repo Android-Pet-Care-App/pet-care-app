@@ -1,6 +1,7 @@
 package com.example.petcareapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppContent() {
-    var currPageInd by remember { mutableIntStateOf(0) }
+    var currPageInd by remember { mutableIntStateOf(1) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->
