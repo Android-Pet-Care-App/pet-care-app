@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppContent() {
-    var currPageInd by remember { mutableIntStateOf(0) }
+    var currPageInd by remember { mutableIntStateOf(1) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->
@@ -89,6 +89,11 @@ fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
             )
         }
     }
+}
+
+@Composable
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(text = "Hello $name!", modifier = modifier.padding(24.dp), color = Color.Black)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

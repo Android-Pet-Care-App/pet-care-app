@@ -29,10 +29,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 
-
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 @Composable
 fun PetsPage(title: String) {
+    var showAddPet by remember { mutableStateOf(false) }
+    if(showAddPet){
+        CreateAddPetPage(onBack = { showAddPet = false })
+        return
+    }
+
     Text(
         text = title,
         style = MaterialTheme.typography.titleLarge,
@@ -45,14 +54,12 @@ fun PetsPage(title: String) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // List of pets
         PetItem(name = "Fluffy")
         PetItem(name = "Spot")
         PetItem(name = "Whiskers")
 
-        // Add Pet button
         Button(
-            onClick = { },
+            onClick = { showAddPet = true },
             modifier = Modifier
                 .padding(top = 16.dp)
                 .height(48.dp)
@@ -71,6 +78,7 @@ fun PetsPage(title: String) {
         }
     }
 }
+
 
 @Composable
 fun PetItem(name: String) {
@@ -98,7 +106,6 @@ fun PetItem(name: String) {
     }
 }
 
-
 @Composable
 fun ThreeDots() {
     Text(
@@ -110,3 +117,6 @@ fun ThreeDots() {
             .clickable { /* Handle dot click action */ }
     )
 }
+
+
+
