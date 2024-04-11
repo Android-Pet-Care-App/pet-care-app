@@ -13,10 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+
+//import androidx.compose.material.Button
+//import androidx.compose.material.ButtonDefaults
+//import androidx.compose.material.MaterialTheme
+
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +35,7 @@ import androidx.compose.ui.unit.dp
 fun PetsPage(title: String) {
     Text(
         text = title,
-        style = MaterialTheme.typography.h4,
+        style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 16.dp, start = 15.dp)
     )
     Column(
@@ -52,12 +57,13 @@ fun PetsPage(title: String) {
                 .padding(top = 16.dp)
                 .height(48.dp)
                 .padding(horizontal = 125.dp),
-            elevation = ButtonDefaults.elevation( // Adjust elevation for 3D effect
+            elevation = ButtonDefaults.buttonElevation( // Adjust elevation for 3D effect
                 defaultElevation = 4.dp,
                 pressedElevation = 8.dp
             ),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.primary,
+                //containerColor = MaterialTheme.colorScheme.primaryContainer,
+                containerColor = Color.Blue,
                 contentColor = Color.White // Text color
             )
         ) {
@@ -84,7 +90,7 @@ fun PetItem(name: String) {
         Spacer(modifier = Modifier.width(16.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.body1,
+            style = MaterialTheme.typography.bodyMedium,
             color = Color.Black,
             modifier = Modifier.weight(1f)
         )

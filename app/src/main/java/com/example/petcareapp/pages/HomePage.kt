@@ -21,7 +21,6 @@ fun HomePage() {
     }
 
     Column {
-        Greeting("Home Page")
         Button(onClick = { showCreateTask = true }) {
             Text(text = "Create Task +")
         }
