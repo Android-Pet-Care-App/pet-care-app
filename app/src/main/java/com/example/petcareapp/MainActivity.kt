@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.petcareapp.data.TaskData
 import com.example.petcareapp.ui.theme.PetCareAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +36,31 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             PetCareAppTheme {
-                AppContent()
+                val fakeTasks = listOf(
+                    TaskData(
+                        taskName = "Walk Johnny",
+                        petName = "Pet 1",
+                        assignee = "John Doe",
+                        dueDate = "May 15, 2024",
+                        dueTime = "10:00 AM"
+                    ),
+                    TaskData(
+                        taskName = "Feed Fido",
+                        petName = "Pet 2",
+                        assignee = "Jane Smith",
+                        dueDate = "May 16, 2024",
+                        dueTime = "12:00 PM"
+                    ),
+                    TaskData(
+                        taskName = "Clean litter box",
+                        petName = "Pet 3",
+                        assignee = "Alex Johnson",
+                        dueDate = "May 17, 2024",
+                        dueTime = "3:00 PM"
+                    )
+                )
+
+                AppContent(fakeTasks)
             }
         }
     }
@@ -43,25 +68,25 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppContent() {
+fun AppContent(tasks: List<TaskData>) {
     var currPageInd by remember { mutableIntStateOf(1) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->
-        BodyContent(Modifier.padding(innerPadding), currPageInd)
+        BodyContent(Modifier.padding(innerPadding), currPageInd, tasks)
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int) {
+fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int, tasks: List<TaskData>) {
     Surface(
         modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         when (pageIndex) {
             0 -> ProfilePage()
-            1 -> HomePage()
+            1 -> HomePage(tasks = tasks)
             2 -> PetsPage(title = "My Pets")
         }
     }
@@ -101,6 +126,30 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     PetCareAppTheme {
-        AppContent()
+        val fakeTasks = listOf(
+            TaskData(
+                taskName = "Walk Johnny",
+                petName = "Pet 1",
+                assignee = "John Doe",
+                dueDate = "May 15, 2024",
+                dueTime = "10:00 AM"
+            ),
+            TaskData(
+                taskName = "Feed Fido",
+                petName = "Pet 2",
+                assignee = "Jane Smith",
+                dueDate = "May 16, 2024",
+                dueTime = "12:00 PM"
+            ),
+            TaskData(
+                taskName = "Clean litter box",
+                petName = "Pet 3",
+                assignee = "Alex Johnson",
+                dueDate = "May 17, 2024",
+                dueTime = "3:00 PM"
+            )
+        )
+
+        AppContent(fakeTasks)
     }
 }

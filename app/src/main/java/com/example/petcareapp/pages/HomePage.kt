@@ -1,61 +1,100 @@
+// HomePage.kt
+
 package com.example.petcareapp
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.petcareapp.data.TaskData
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomePage() {
-    var showCreateTask by remember { mutableStateOf(false) }
-    if (showCreateTask) {
-        CreateTaskPage(onBack = { showCreateTask = false })
-        return
+fun HomePage(tasks: List<TaskData>) {
+    val tasks = remember {
+        listOf(
+            TaskData(
+                taskName = "Walk Johnny",
+                petName = "Pet 1",
+                assignee = "John Doe",
+                dueDate = "May 15, 2024",
+                dueTime = "10:00 AM"
+            ),
+            TaskData(
+                taskName = "Feed Fido",
+                petName = "Pet 2",
+                assignee = "Jane Smith",
+                dueDate = "May 16, 2024",
+                dueTime = "12:00 PM"
+            ),
+            TaskData(
+                taskName = "Clean litter box",
+                petName = "Pet 3",
+                assignee = "Alex Johnson",
+                dueDate = "May 17, 2024",
+                dueTime = "3:00 PM"
+            )
+        )
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp) // Add margin around the Column
+            .padding(16.dp)
     ) {
         Text(
             text = "Today's Tasks",
             fontSize = 26.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-        Spacer(modifier = Modifier.weight(1f))
+
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(tasks) { task ->
+                Task(
+                    taskName = task.taskName,
+                    petName = task.petName,
+                    assignee = task.assignee,
+                    dueDate = task.dueDate,
+                    dueTime = task.dueTime
+                )
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Gray,
+                    thickness = 0.2.dp
+                )
+            }
+        }
+
         Button(
-            onClick = { showCreateTask = true },
-            modifier = Modifier
-                .fillMaxWidth() // Button takes full width of parent
-                .padding(horizontal = 20.dp) // Horizontal padding of 20.sp
-                .align(Alignment.End) // Align button to the end (bottom) of the column
+            onClick = {
+                // Implement logic for creating a new task
+            },
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Create Task +")
         }
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
+
+@Preview(showBackground = true)
 @Composable
 fun HomePagePreview() {
-    HomePage() // Simply call your composable function within the preview function
+    HomePage(tasks = TaskData.sampleTasks)
 }
