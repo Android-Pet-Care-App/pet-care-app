@@ -17,13 +17,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.sp
 import com.example.petcareapp.data.TaskData
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(tasks: List<TaskData>) {
+
+    var showCreateTask by remember { mutableStateOf(false) }
+    if (showCreateTask) {
+        CreateTaskPage(onBack = { showCreateTask = false })
+        return
+    }
+
     val tasks = remember {
         listOf(
             TaskData(
@@ -49,6 +60,7 @@ fun HomePage(tasks: List<TaskData>) {
             )
         )
     }
+
 
     Column(
         modifier = Modifier
@@ -83,7 +95,7 @@ fun HomePage(tasks: List<TaskData>) {
 
         Button(
             onClick = {
-                // Implement logic for creating a new task
+                showCreateTask = true
             },
             modifier = Modifier.fillMaxWidth()
         ) {
