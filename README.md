@@ -179,7 +179,12 @@ from the original requirements
 - Firebase
 
 [Add video/gif of your current application that shows build progress]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+<img src="https://github.com/Android-Pet-Care-App/pet-care-app/assets/17109419/48cfc73b-b11d-4f69-bef5-a95edd896e2c" width=600>
+
+
+
+
+
 
 ## App Demo Video
 
