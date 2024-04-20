@@ -33,12 +33,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.petcareapp.data.ApiService
 
 @Composable
 fun PetsPage(title: String) {
     var showAddPet by remember { mutableStateOf(false) }
     if(showAddPet){
-        CreateAddPetPage(onBack = { showAddPet = false })
+        val apiService = ApiService()
+
+        CreateAddPetPage(
+            onBack = { showAddPet = false },
+            apiService = apiService
+        )
         return
     }
 

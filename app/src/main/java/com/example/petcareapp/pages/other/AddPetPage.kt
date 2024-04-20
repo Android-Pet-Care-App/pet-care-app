@@ -34,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -47,11 +48,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import com.example.petcareapp.data.ApiService
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAddPetPage(onBack: () -> Unit) {
+fun CreateAddPetPage(onBack: () -> Unit, apiService: ApiService) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -79,7 +81,19 @@ fun CreateAddPetPage(onBack: () -> Unit) {
 
 
         var petType by remember { mutableStateOf(false) }
-        val options = listOf("No Selection", "Dog", "Cat", "Fish")
+//        val options = listOf("No Selection", "Dog", "Cat", "Fish")
+        var options by remember { mutableStateOf(listOf("No Selection")) }
+        val context = LocalContext.current
+        LaunchedEffect(key1 = true) {
+            apiService.fetchAnimalTypes("7400efafc9msh0fce15bb9638bc9p1b9c93jsn7741bf0e3184",
+                onComplete = { animalTypes ->
+                    options = listOf("No Selection") + animalTypes
+                },
+                onError = { exception ->
+                    Toast.makeText(context, "Failed to fetch animal types: ${exception.message}", Toast.LENGTH_LONG).show()
+                }
+            )
+        }
         var selectedIndex by remember { mutableIntStateOf(0) }
         HeadingTextForPetTask("Select Pet Type")
         Box(
