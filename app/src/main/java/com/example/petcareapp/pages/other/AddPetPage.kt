@@ -49,6 +49,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import com.example.petcareapp.data.ApiService
+import com.example.petcareapp.BuildConfig
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -85,7 +87,7 @@ fun CreateAddPetPage(onBack: () -> Unit, apiService: ApiService) {
         var options by remember { mutableStateOf(listOf("No Selection")) }
         val context = LocalContext.current
         LaunchedEffect(key1 = true) {
-            apiService.fetchAnimalTypes("7400efafc9msh0fce15bb9638bc9p1b9c93jsn7741bf0e3184",
+            apiService.fetchAnimalTypes(BuildConfig.API_KEY,
                 onComplete = { animalTypes ->
                     options = listOf("No Selection") + animalTypes
                 },
