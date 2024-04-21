@@ -1,5 +1,5 @@
 package com.example.petcareapp.model.service.impl
 
-class StorageServiceImpl {
-    // TODO: Implement storing pet tasks
-}
+//class StorageServiceImpl {
+//    // TODO: Implement storing pet tasks
+//}
