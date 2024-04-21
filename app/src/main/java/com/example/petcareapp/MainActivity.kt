@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -27,40 +29,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.petcareapp.data.TaskData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.example.petcareapp.data.tasks.TaskDatabase
+import com.example.petcareapp.data.tasks.TaskEvent
+import com.example.petcareapp.data.tasks.TaskState
+import com.example.petcareapp.data.tasks.TaskViewModel
+import com.example.petcareapp.pages.HomePage
 import com.example.petcareapp.ui.theme.PetCareAppTheme
 
 class MainActivity : ComponentActivity() {
+    private val db by lazy{
+        Room.databaseBuilder(
+            applicationContext,
+            TaskDatabase::class.java,
+            "tasks.db"
+        ).build()
+    }
+
+    private val taskViewModel by viewModels<TaskViewModel>(
+        factoryProducer =  {
+            object : ViewModelProvider.Factory{
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return TaskViewModel(db.dao) as T
+                }
+            }
+        }
+    )
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetCareAppTheme {
-                val fakeTasks = listOf(
-                    TaskData(
-                        taskName = "Walk Johnny",
-                        petName = "Pet 1",
-                        assignee = "John Doe",
-                        dueDate = "May 15, 2024",
-                        dueTime = "10:00 AM"
-                    ),
-                    TaskData(
-                        taskName = "Feed Fido",
-                        petName = "Pet 2",
-                        assignee = "Jane Smith",
-                        dueDate = "May 16, 2024",
-                        dueTime = "12:00 PM"
-                    ),
-                    TaskData(
-                        taskName = "Clean litter box",
-                        petName = "Pet 3",
-                        assignee = "Alex Johnson",
-                        dueDate = "May 17, 2024",
-                        dueTime = "3:00 PM"
-                    )
-                )
-
-                AppContent(fakeTasks)
+                val taskState by taskViewModel.state.collectAsState()
+                AppContent(taskState = taskState, onTaskEvent = taskViewModel::onEvent)
             }
         }
     }
@@ -68,26 +72,23 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppContent(tasks: List<TaskData>) {
-    var currPageInd by remember { mutableIntStateOf(1) }
+fun AppContent(
+    taskState: TaskState,
+    onTaskEvent: (TaskEvent) -> Unit
+) {
+    var currPageInd by remember { mutableIntStateOf(0) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->
-        BodyContent(Modifier.padding(innerPadding), currPageInd, tasks)
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun BodyContent(modifier: Modifier = Modifier, pageIndex: Int, tasks: List<TaskData>) {
-    Surface(
-        modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        when (pageIndex) {
-            0 -> ProfilePage()
-            1 -> HomePage(tasks = tasks)
-            2 -> PetsPage(title = "My Pets")
+        Surface(
+            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            when (currPageInd) {
+                0 -> ProfilePage()
+                1 -> HomePage(taskState,onTaskEvent)
+                2 -> PetsPage(title = "My Pets")
+            }
         }
     }
 }
@@ -126,30 +127,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     PetCareAppTheme {
-        val fakeTasks = listOf(
-            TaskData(
-                taskName = "Walk Johnny",
-                petName = "Pet 1",
-                assignee = "John Doe",
-                dueDate = "May 15, 2024",
-                dueTime = "10:00 AM"
-            ),
-            TaskData(
-                taskName = "Feed Fido",
-                petName = "Pet 2",
-                assignee = "Jane Smith",
-                dueDate = "May 16, 2024",
-                dueTime = "12:00 PM"
-            ),
-            TaskData(
-                taskName = "Clean litter box",
-                petName = "Pet 3",
-                assignee = "Alex Johnson",
-                dueDate = "May 17, 2024",
-                dueTime = "3:00 PM"
-            )
-        )
-
-        AppContent(fakeTasks)
+        //AppContent()
     }
 }

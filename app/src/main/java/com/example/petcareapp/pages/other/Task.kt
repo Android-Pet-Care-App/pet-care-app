@@ -4,7 +4,6 @@ package com.example.petcareapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,15 +12,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.petcareapp.data.tasks.Task
 
 @Composable
-fun Task(
-    taskName: String,
-    petName: String,
-    assignee: String,
-    dueDate: String? = null,
-    dueTime: String
-) {
+fun TaskBar(task: Task) {
+    val taskName: String = task.taskName
+    val petName: String = task.petName
+    val assignee: String = task.assignee
+    val dueDate: Long = task.dueDate
+    val dateAdded: Long = task.dateAdded
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -49,14 +49,14 @@ fun Task(
                         modifier = Modifier.padding(start = 10.dp)
                     ) {
                         Text(text = "Due Date:", fontSize = 10.sp)
-                        Text(text = dueDate, fontSize = 10.sp)
+                        Text(text = dueDate.toString(), fontSize = 10.sp)
                     }
                 }
                 Column(
                     modifier = Modifier.padding(start = 10.dp)
                 ) {
                     Text(text = "Due Time:", fontSize = 10.sp)
-                    Text(text = dueTime, fontSize = 10.sp)
+                    Text(text = "time", fontSize = 10.sp)
                 }
             }
         }
@@ -66,11 +66,13 @@ fun Task(
 @Preview(showBackground = true)
 @Composable
 fun TaskPreview() {
-    Task(
-        taskName = "Walk Johnny",
-        petName = "Pet 1",
+    val t = Task(
+        taskName = "Walk Johhny",
+        petName = "Pet 2",
         assignee = "John Doe",
-        dueDate = "May 15, 2024",
-        dueTime = "10:00 AM"
+        completed = false,
+        dueDate = 0,
+        dateAdded = 0
     )
+    TaskBar(t)
 }

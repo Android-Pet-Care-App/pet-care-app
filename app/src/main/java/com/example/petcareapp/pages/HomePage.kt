@@ -1,6 +1,6 @@
 // HomePage.kt
 
-package com.example.petcareapp
+package com.example.petcareapp.pages
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,51 +16,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.sp
-import com.example.petcareapp.data.TaskData
+import com.example.petcareapp.CreateTaskPage
+import com.example.petcareapp.TaskBar
+import com.example.petcareapp.data.tasks.TaskEvent
+import com.example.petcareapp.data.tasks.TaskState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomePage(tasks: List<TaskData>) {
-
+fun HomePage(
+   state: TaskState,
+   onEvent: (TaskEvent) -> Unit
+) {
     var showCreateTask by remember { mutableStateOf(false) }
     if (showCreateTask) {
-        CreateTaskPage(onBack = { showCreateTask = false })
+        CreateTaskPage(onEvent,onBack = { showCreateTask = false })
         return
     }
-
-    val tasks = remember {
-        listOf(
-            TaskData(
-                taskName = "Walk Johnny",
-                petName = "Pet 1",
-                assignee = "John Doe",
-                dueDate = "May 15, 2024",
-                dueTime = "10:00 AM"
-            ),
-            TaskData(
-                taskName = "Feed Fido",
-                petName = "Pet 2",
-                assignee = "Jane Smith",
-                dueDate = "May 16, 2024",
-                dueTime = "12:00 PM"
-            ),
-            TaskData(
-                taskName = "Clean litter box",
-                petName = "Pet 3",
-                assignee = "Alex Johnson",
-                dueDate = "May 17, 2024",
-                dueTime = "3:00 PM"
-            )
-        )
-    }
-
 
     Column(
         modifier = Modifier
@@ -77,14 +53,8 @@ fun HomePage(tasks: List<TaskData>) {
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(tasks) { task ->
-                Task(
-                    taskName = task.taskName,
-                    petName = task.petName,
-                    assignee = task.assignee,
-                    dueDate = task.dueDate,
-                    dueTime = task.dueTime
-                )
+            items(state.tasks) { task ->
+                TaskBar(task)
                 Divider(
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.Gray,
@@ -108,5 +78,5 @@ fun HomePage(tasks: List<TaskData>) {
 @Preview(showBackground = true)
 @Composable
 fun HomePagePreview() {
-    HomePage(tasks = TaskData.sampleTasks)
+    //HomePage()
 }

@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.widget.Toast
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -53,12 +54,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
+import com.example.petcareapp.data.tasks.TaskEvent
+import com.example.petcareapp.data.tasks.Task
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTaskPage(onBack: () -> Unit) {
+fun CreateTaskPage(
+    onEvent: (TaskEvent) -> Unit,
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+
     var taskName by remember { mutableStateOf("") }
     var chosenPet by remember { mutableStateOf("Choose a Pet") }
     var chosenTask by remember { mutableStateOf("") }
@@ -92,7 +100,23 @@ fun CreateTaskPage(onBack: () -> Unit) {
         }
         RecurringCheckBox(recurringChecked)
 
-        SubmitButton(onBack)
+        SubmitButton {
+            if(taskName.isBlank() || chosenPet == "Choose a Pet"){
+                Toast.makeText(context,"Task Not Created",Toast.LENGTH_LONG)
+            }
+
+            val task = Task(
+                taskName = taskName,
+                petName = chosenPet,
+                assignee = "Me",
+                completed = false,
+                dueDate = 0,
+                dateAdded = 0,
+            )
+            Toast.makeText(context,"Task Created",Toast.LENGTH_LONG)
+            onEvent(TaskEvent.SaveTask(task))
+            onBack()
+        }
     }
 }
 
@@ -277,7 +301,8 @@ fun RecurringCheckBox(recurringChecked: MutableState<Boolean>) {
             checked = recurringChecked.value,
             onCheckedChange = { recurringChecked.value = it }
         )
-        Text(text = "Recurring",
+        Text(
+            text = "Recurring",
             modifier = Modifier.padding(8.dp),
             style = TextStyle(fontSize = 24.sp)
         )
@@ -285,16 +310,18 @@ fun RecurringCheckBox(recurringChecked: MutableState<Boolean>) {
 }
 
 @Composable
-fun SubmitButton(goBack: () -> Unit){
-    val context = LocalContext.current
+fun SubmitButton(
+    addToDb: () -> Unit
+) {
     Spacer(modifier = Modifier.padding(4.dp))
     Button(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         shape = RoundedCornerShape(4.dp),
-        content = {Text(text = "Create Task")},
+        content = { Text(text = "Create Task") },
         onClick = {
-            // Toast.makeText(context,"Task Created",Toast.LENGTH_LONG) // y toast not work
-            goBack()
+            addToDb()
         },
     )
 }
