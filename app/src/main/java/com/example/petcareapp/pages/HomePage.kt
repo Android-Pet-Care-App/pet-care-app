@@ -21,7 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.sp
-import com.example.petcareapp.CreateTaskPage
+import com.example.petcareapp.pages.other.CreateTaskPage
 import com.example.petcareapp.TaskBar
 import com.example.petcareapp.data.tasks.TaskEvent
 import com.example.petcareapp.data.tasks.TaskState
@@ -50,9 +50,7 @@ fun HomePage(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
+        LazyColumn( modifier = Modifier.weight(1f) ) {
             items(taskState.tasks) { task ->
                 TaskBar(task,onTaskEvent)
                 Divider(
