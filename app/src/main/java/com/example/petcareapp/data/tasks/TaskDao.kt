@@ -12,11 +12,15 @@ interface TaskDao {
     suspend fun addTask(task: Task) // suspend waits to finish opperation and then moves on (sync)
 
     @Delete
-    suspend fun delContact(task: Task)
+    suspend fun delTask(task: Task)
+
+    @Query("Update Task SET COMPLETED=TRUE where id = :taskId")
+    suspend fun completeTask(taskId: Int)
 
     @Query("SELECT * from Task ORDER BY dateAdded")
     fun getTasksByDateAdded(): Flow<List<Task>>
 
     @Query("SELECT * from Task ORDER BY dueDate")
     fun getTasksByDueDate(): Flow<List<Task>>
+
 }

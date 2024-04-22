@@ -42,20 +42,17 @@ class TaskViewModel(
             is TaskEvent.DeleteTask -> {
                 // for suspend funcs to make em syncronous
                 viewModelScope.launch {
-                    dao.delContact(event.task)
+                    dao.delTask(event.task)
                 }
             }
-            is TaskEvent.CompleteTask -> {}
+            is TaskEvent.CompleteTask -> {
+                val taskId = event.taskId
+                viewModelScope.launch {
+                    dao.completeTask(taskId)
+                }
+            }
             is TaskEvent.SaveTask -> {
-                val taskName = state.value.taskName.value
-                val assignee = state.value.assignee.value
-                val petName = state.value.petName.value
-                val completed = state.value.completed.value
-                val dateAdded = state.value.dateAdded.value
-                val dueDate = state.value.dueDate.value
-                if (taskName.isBlank() || assignee.isBlank() || petName.isBlank()){ return }
-
-                val task = Task( taskName = taskName, assignee = assignee, petName = petName, completed = completed, dateAdded = dateAdded, dueDate = dueDate )
+                val task = event.task
                 viewModelScope.launch {
                     dao.addTask(task)
                 }

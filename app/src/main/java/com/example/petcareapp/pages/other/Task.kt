@@ -4,6 +4,9 @@ package com.example.petcareapp
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.materialIcon
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -13,13 +16,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.petcareapp.data.tasks.Task
+import com.example.petcareapp.data.tasks.TaskEvent
 
 @Composable
-fun TaskBar(task: Task) {
+fun TaskBar(task: Task, onTaskEvent: (TaskEvent) -> Unit ) {
     val taskName: String = task.taskName
     val petName: String = task.petName
     val assignee: String = task.assignee
     val dueDate: Long = task.dueDate
+    val dateDue: String = getDateFromUnixTime(dueDate)
+    val timeDue: String = getTimeFromUnixTime(dueDate)
     val dateAdded: Long = task.dateAdded
 
     Row(
@@ -44,20 +50,26 @@ fun TaskBar(task: Task) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End
             ) {
-                if (dueDate != null) {
-                    Column(
-                        modifier = Modifier.padding(start = 10.dp)
-                    ) {
-                        Text(text = "Due Date:", fontSize = 10.sp)
-                        Text(text = dueDate.toString(), fontSize = 10.sp)
-                    }
-                }
                 Column(
                     modifier = Modifier.padding(start = 10.dp)
                 ) {
-                    Text(text = "Due Time:", fontSize = 10.sp)
-                    Text(text = "time", fontSize = 10.sp)
+                    Text(text = "Due Date:", fontSize = 10.sp)
+                    Text(text = dateDue, fontSize = 10.sp)
                 }
+                Column( modifier = Modifier.padding(start = 10.dp) ) {
+                    Text(text = "Due Time:", fontSize = 10.sp)
+                    Text(text = getTimeWithAmPm(timeDue), fontSize = 10.sp)
+                }
+                Column( modifier = Modifier.padding(start = 10.dp) ) {
+                    Text(text = "Completed", fontSize = 10.sp)
+                    Text(text = task.completed.toString(), fontSize = 10.sp)
+                }
+            }
+            Button(onClick = {onTaskEvent(TaskEvent.DeleteTask(task)) }) {
+               Text(text = "Delete")
+            }
+            Button(onClick = {onTaskEvent(TaskEvent.CompleteTask(task.id))  }) {
+                Text(text = "Complete")
             }
         }
     }
@@ -74,5 +86,5 @@ fun TaskPreview() {
         dueDate = 0,
         dateAdded = 0
     )
-    TaskBar(t)
+    //TaskBar(t)
 }

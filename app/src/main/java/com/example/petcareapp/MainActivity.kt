@@ -76,7 +76,7 @@ fun AppContent(
     taskState: TaskState,
     onTaskEvent: (TaskEvent) -> Unit
 ) {
-    var currPageInd by remember { mutableIntStateOf(0) }
+    var currPageInd by remember { mutableIntStateOf(1) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->

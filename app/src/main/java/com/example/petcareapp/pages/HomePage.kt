@@ -29,12 +29,12 @@ import com.example.petcareapp.data.tasks.TaskState
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomePage(
-   state: TaskState,
-   onEvent: (TaskEvent) -> Unit
+   taskState: TaskState,
+   onTaskEvent: (TaskEvent) -> Unit
 ) {
     var showCreateTask by remember { mutableStateOf(false) }
     if (showCreateTask) {
-        CreateTaskPage(onEvent,onBack = { showCreateTask = false })
+        CreateTaskPage(taskState,onTaskEvent,onBack = { showCreateTask = false })
         return
     }
 
@@ -53,8 +53,8 @@ fun HomePage(
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            items(state.tasks) { task ->
-                TaskBar(task)
+            items(taskState.tasks) { task ->
+                TaskBar(task,onTaskEvent)
                 Divider(
                     modifier = Modifier.fillMaxWidth(),
                     color = Color.Gray,

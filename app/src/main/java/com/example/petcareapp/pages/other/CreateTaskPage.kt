@@ -27,6 +27,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
@@ -56,23 +57,20 @@ import androidx.compose.ui.unit.sp
 import androidx.core.graphics.toColorInt
 import com.example.petcareapp.data.tasks.TaskEvent
 import com.example.petcareapp.data.tasks.Task
-
+import com.example.petcareapp.data.tasks.TaskState
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTaskPage(
-    onEvent: (TaskEvent) -> Unit,
+    taskState: TaskState,
+    onTaskEvent: (TaskEvent) -> Unit,
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
 
-    var taskName by remember { mutableStateOf("") }
-    var chosenPet by remember { mutableStateOf("Choose a Pet") }
-    var chosenTask by remember { mutableStateOf("") }
     val selectedDate = remember { mutableStateOf("") }
     val selectedTime = remember { mutableStateOf("") }
-    val recurringChecked = remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -89,32 +87,39 @@ fun CreateTaskPage(
             }
         )
 
-        TaskNameInput(taskName) { newTskName -> taskName = newTskName }
-        DropDownSelectPet(chosenPet) { newOpt -> chosenPet = newOpt }
-        SelectMenuComponent(chosenTask) { newTask -> chosenTask = newTask }
+        TaskNameInput(taskState.taskName.value) { newTskName -> taskState.taskName.value = newTskName }
+        DropDownSelectPet(taskState.petName.value) { newOpt -> taskState.petName.value = newOpt }
         HeadingTextForCreateTask(heading = "Due")
         Row {
             DatePickerButton(selectedDate)
             Spacer(modifier = Modifier.padding(8.dp))
             TimePickerButton(selectedTime)
         }
-        RecurringCheckBox(recurringChecked)
 
         SubmitButton {
-            if(taskName.isBlank() || chosenPet == "Choose a Pet"){
-                Toast.makeText(context,"Task Not Created",Toast.LENGTH_LONG)
+            if(taskState.taskName.value.isBlank()){
+                Toast.makeText(context,"Task Name is empty",Toast.LENGTH_LONG).show()
+                return@SubmitButton
+            }
+            if(taskState.petName.value == ""){
+                Toast.makeText(context,"No Pet Selected",Toast.LENGTH_LONG).show()
+                return@SubmitButton
+            }
+            if(selectedDate.value.isBlank() || selectedTime.value.isBlank()){
+                Toast.makeText(context,"Date and/or time not selected",Toast.LENGTH_LONG).show()
+                return@SubmitButton
             }
 
             val task = Task(
-                taskName = taskName,
-                petName = chosenPet,
+                taskName = taskState.taskName.value,
+                petName = taskState.petName.value,
                 assignee = "Me",
                 completed = false,
-                dueDate = 0,
-                dateAdded = 0,
+                dueDate = convertToUnixTime(selectedDate.value, selectedTime.value),
+                dateAdded = System.currentTimeMillis(),
             )
-            Toast.makeText(context,"Task Created",Toast.LENGTH_LONG)
-            onEvent(TaskEvent.SaveTask(task))
+            //Toast.makeText(context,task.toString(),Toast.LENGTH_LONG).show()
+            onTaskEvent(TaskEvent.SaveTask(task))
             onBack()
         }
     }
@@ -197,60 +202,6 @@ fun DropDownSelectPet(selectedOption: String, changeSelectedOpt: (String) -> Uni
 }
 
 @Composable
-fun SelectMenuComponent(selectedOption: String, changeSelectedOpt: (String) -> Unit) {
-    val options = listOf("Walk", "Feed", "Change Litter")
-
-    HeadingTextForCreateTask("Select Task")
-    Column {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            options.forEach { option ->
-                Button(
-                    onClick = { changeSelectedOpt(option) },
-                    modifier = Modifier
-                        .padding(1.dp),
-                    // Change the background color if this option is selected
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selectedOption == option) Color.Blue else Color.LightGray
-                    )
-                ) {
-                    Text(
-                        text = option,
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
-                }
-            }
-        }
-
-
-        var inputColor =
-            if ((selectedOption !in options) && (selectedOption != "")) Color("#dde3ea".toColorInt()) else Color.Transparent
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .background(inputColor)
-                .fillMaxWidth()
-                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-                .padding(horizontal = 8.dp, vertical = 6.dp)
-        ) {
-            BasicTextField(
-                value = selectedOption,
-                onValueChange = {
-                    //customTask = it
-                    changeSelectedOpt(it)
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-@Composable
 fun DatePickerButton(selectedDate: MutableState<String>) {
     val months =
         listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
@@ -284,29 +235,13 @@ fun TimePickerButton(selectedTime: MutableState<String>) {
             selectedTime.value = "$mHour:$mMinute"
         }, mHour, mMinute, false
     )
-    val btnText = if (selectedTime.value == "") "Choose Time" else selectedTime.value
+    val btnText = if (selectedTime.value == "") "Choose Time" else getTimeWithAmPm(selectedTime.value)
     Button(
         content = { Text(text = btnText, color = Color.Black) },
         onClick = { mTimePickerDialog.show() },
         shape = RoundedCornerShape(4.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color("#dde3ea".toColorInt())),
     )
-}
-
-@Composable
-fun RecurringCheckBox(recurringChecked: MutableState<Boolean>) {
-    Spacer(modifier = Modifier.padding(4.dp))
-    Row {
-        Checkbox(
-            checked = recurringChecked.value,
-            onCheckedChange = { recurringChecked.value = it }
-        )
-        Text(
-            text = "Recurring",
-            modifier = Modifier.padding(8.dp),
-            style = TextStyle(fontSize = 24.sp)
-        )
-    }
 }
 
 @Composable
@@ -325,3 +260,5 @@ fun SubmitButton(
         },
     )
 }
+
+
