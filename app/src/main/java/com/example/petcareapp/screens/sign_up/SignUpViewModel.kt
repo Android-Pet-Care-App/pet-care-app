@@ -3,7 +3,7 @@ package com.example.petcareapp.screens.sign_up
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.viewModelScope
-import com.example.petcareapp.SETTINGS_SCREEN
+import com.example.petcareapp.HOME_SCREEN
 import com.example.petcareapp.SIGN_UP_SCREEN
 import com.example.petcareapp.common.snackbar.SnackbarManager
 import com.example.petcareapp.model.service.AccountService
@@ -61,27 +61,37 @@ class SignUpViewModel @Inject constructor(
 
         // Launch a coroutine to call signUpUser
         viewModelScope.launch {
-            try {
-                // Call signUpUser and collect its emitted states
+            try { // Sign up the user
                 accountService.signUpUser(email, password).collect { state ->
                     if (state.loading) {
                         // Handle loading state if needed
                         // Example: show a progress indicator
+                        /**
+                         * TODO: Implement loading indicator
+                         */
                         Log.d("SignUp", "Loading...")
                     } else if (state.data != null) {
-                        // Handle success state
-//                        openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+                        /**
+                         * TODO: Navigate to the home screen upon successful sign in
+                         */
+                        openAndPopUp(HOME_SCREEN, SIGN_UP_SCREEN)
                         Log.e("SignUp", "Successfully signed up")
                     } else if (state.error != null) {
-                        // Handle error state
                         val errorMessage = state.error ?: "Unknown error"
                         Log.e("SignUp", "Error: $errorMessage")
                     }
                 }
             } catch (e: Exception) {
-                // Handle any exceptions that may occur during signUpUser
                 val errorMessage = e.message ?: "Unknown error"
-                Log.e("SignUp", "Sign up failed: $errorMessage", e)
+                Log.d("SignUp", "Sign up failed: $errorMessage", e)
+            }
+
+            try { // Authenticate the user
+                accountService.authenticate(email, password)
+                Log.d("SignUp", "Successfully authenticated: ${accountService.currentUserId}")
+            } catch (e: Exception) {
+                val errorMessage = e.message ?: "Unknown error"
+                Log.e("SignUp", "Authentication failed: $errorMessage", e)
             }
         }
 

@@ -1,7 +1,7 @@
 package com.example.petcareapp
 
-const val SPLASH_SCREEN = "SplashScreen"
-const val SETTINGS_SCREEN = "SettingsScreen"
+const val LANDING_SCREEN = "LandingScreen"
+const val HOME_SCREEN = "HomeScreen"
 const val LOGIN_SCREEN = "LoginScreen"
 const val SIGN_UP_SCREEN = "SignUpScreen"
 const val TASKS_SCREEN = "TasksScreen"

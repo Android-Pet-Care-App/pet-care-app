@@ -52,6 +52,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.makeitso.screens.login.LoginScreen
+import com.example.petcareapp.screens.home.HomeScreen
+import com.example.petcareapp.screens.landing.LandingScreen
 import com.example.petcareapp.screens.sign_up.SignUpScreen
 
 @AndroidEntryPoint
@@ -211,7 +214,7 @@ fun PetCareAppUi() {
                     // Define your navigation graph within the content area
                     NavHost(
                         navController = appState.navController,
-                        startDestination = SIGN_UP_SCREEN, // Update with your start destination
+                        startDestination = LANDING_SCREEN, // Update with your start destination
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         // Add composables defined in your navigation graph
@@ -255,24 +258,24 @@ fun resources(): Resources {
 
 @ExperimentalMaterialApi
 fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
-//    composable(SPLASH_SCREEN) {
-//        SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-//    }
-//
-//    composable(SETTINGS_SCREEN) {
-//        SettingsScreen(
-//            restartApp = { route -> appState.clearAndNavigate(route) },
-//            openScreen = { route -> appState.navigate(route) }
-//        )
-//    }
-//
+    composable(LANDING_SCREEN) {
+        LandingScreen(
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) },
+            openScreen = { route -> appState.navigate(route) }
+        )
+    }
+
+    composable(HOME_SCREEN) {
+        HomeScreen()
+    }
+
 //    composable(STATS_SCREEN) {
 //        StatsScreen()
 //    }
 
-//    composable(LOGIN_SCREEN) {
-//        LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-//    }
+    composable(LOGIN_SCREEN) {
+        LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    }
 
     composable(SIGN_UP_SCREEN) {
         SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
