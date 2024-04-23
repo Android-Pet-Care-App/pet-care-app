@@ -79,6 +79,11 @@ fun PetsPage(
 
 @Composable
 fun PetItem(pet: Pet) {
+    val petName = "john"
+    val animal = "john"
+    val breed = "pit-bit"
+    val petAge = "Apr 12, 2024"
+    val dateAdded = "Apr 10, 2022"
     Row(
         modifier = Modifier
             .fillMaxWidth()

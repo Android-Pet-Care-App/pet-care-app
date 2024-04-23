@@ -18,85 +18,107 @@ package com.example.makeitso.screens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.makeitso.common.composable.BasicButton
 import com.example.makeitso.common.composable.BasicTextButton
 import com.example.makeitso.common.composable.BasicToolbar
-import com.example.makeitso.common.composable.EmailField
-import com.example.makeitso.common.composable.PasswordField
 import com.example.petcareapp.R.string as AppText
-import com.example.petcareapp.common.composable.*
 import com.example.petcareapp.common.ext.basicButton
 import com.example.petcareapp.common.ext.fieldModifier
 import com.example.petcareapp.common.ext.textButton
-import com.example.petcareapp.ui.theme.PetCareAppTheme
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+
+import com.example.petcareapp.R.drawable as AppIcon
 
 @Composable
-fun LoginScreen(
-  openAndPopUp: (String, String) -> Unit,
-  viewModel: LoginViewModel = hiltViewModel()
-) {
-  val uiState by viewModel.uiState
-
-  LoginScreenContent(
-    uiState = uiState,
-    onEmailChange = viewModel::onEmailChange,
-    onPasswordChange = viewModel::onPasswordChange,
-    onSignInClick = { viewModel.onSignInClick(openAndPopUp) },
-    onForgotPasswordClick = viewModel::onForgotPasswordClick
-  )
-}
-
-@Composable
-fun LoginScreenContent(
-  modifier: Modifier = Modifier,
-  uiState: LoginUiState,
-  onEmailChange: (String) -> Unit,
-  onPasswordChange: (String) -> Unit,
-  onSignInClick: () -> Unit,
-  onForgotPasswordClick: () -> Unit
+fun SignInScreen(
+  goLandingPage:()-> Unit,
+  goCreateAccountPage:()-> Unit
 ) {
   BasicToolbar(AppText.login_details)
 
   Column(
-    modifier = modifier
+    modifier = Modifier
       .fillMaxWidth()
       .fillMaxHeight()
       .verticalScroll(rememberScrollState()),
     verticalArrangement = Arrangement.Center,
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-    EmailField(uiState.email, onEmailChange, Modifier.fieldModifier())
-    PasswordField(uiState.password, onPasswordChange, Modifier.fieldModifier())
 
-    BasicButton(AppText.sign_in, Modifier.basicButton()) { onSignInClick() }
+
+    val email = remember { mutableStateOf("") }
+    MyEmailField(email.value, {onNewValue -> email.value=onNewValue}, Modifier.fieldModifier())
+
+    val password = remember { mutableStateOf("") }
+    MyPasswordField(password.value, {onNewValue -> password.value=onNewValue}, Modifier.fieldModifier())
+
+    BasicButton(AppText.sign_in, Modifier.basicButton()) {goCreateAccountPage() }
 
     BasicTextButton(AppText.forgot_password, Modifier.textButton()) {
-      onForgotPasswordClick()
+      // if vallidemail
+      //onForgotPasswordClick()
+      //SnackbarManager.showMessage(throwable.toSnackbarMessage())
     }
   }
 }
-
-@Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-  val uiState = LoginUiState(
-    email = "email@test.com"
-  )
+fun MyPasswordField(
+  value: String,
+  onNewValue: (String) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  var isVisible by remember { mutableStateOf(false) }
 
-  PetCareAppTheme {
-    LoginScreenContent(
-      uiState = uiState,
-      onEmailChange = { },
-      onPasswordChange = { },
-      onSignInClick = { },
-      onForgotPasswordClick = { }
-    )
-  }
+  val icon =
+    if (isVisible) painterResource(AppIcon.ic_visibility_on)
+    else painterResource(AppIcon.ic_visibility_off)
+
+  val visualTransformation =
+    if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+
+  OutlinedTextField(
+    modifier = modifier,
+    value = value,
+    onValueChange = { onNewValue(it) },
+    placeholder = { Text(text = "Password" ) },
+    leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
+    trailingIcon = {
+      IconButton(onClick = { isVisible = !isVisible }) {
+        Icon(painter = icon, contentDescription = "Visibility")
+      }
+    },
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+    visualTransformation = visualTransformation
+  )
+}
+
+@Composable
+fun MyEmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
+  OutlinedTextField(
+    singleLine = true,
+    modifier = modifier,
+    value = value,
+    onValueChange = { onNewValue(it) },
+    placeholder = { Text("Email") },
+    leadingIcon = { Icon(imageVector = Icons.Default.Email, contentDescription = "Email") }
+  )
 }

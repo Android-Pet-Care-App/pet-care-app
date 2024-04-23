@@ -1,9 +1,7 @@
 package com.example.petcareapp
 
-import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -51,8 +49,6 @@ import com.example.petcareapp.pages.HomePage
 import com.example.petcareapp.pages.PetsPage
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.makeitso.common.composable.PermissionDialog
-import com.example.makeitso.common.composable.RationaleDialog
 import com.example.petcareapp.common.snackbar.SnackbarManager
 import com.example.petcareapp.ui.theme.PetCareAppTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,13 +60,10 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.example.makeitso.screens.login.LoginScreen
-import com.example.petcareapp.screens.home.HomeScreen
+import com.example.makeitso.screens.login.SignInScreen
 import com.example.petcareapp.screens.landing.LandingScreen
-import com.example.petcareapp.screens.sign_up.SignUpScreen
+import com.example.petcareapp.screens.sign_up.CreateAccountScreen
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi
@@ -114,59 +107,70 @@ class MainActivity : AppCompatActivity() {
             PetCareAppTheme {
                 val taskState by taskViewModel.state.collectAsState()
                 val petState by petViewModel.state.collectAsState()
-//                AppContent(
-//                    taskState = taskState,
-//                    onTaskEvent = taskViewModel::onEvent,
-//                    petState = petState,
-//                    onPetEvent = petViewModel::onEvent,
-//                )
-//            }
-                PetCareAppUi()
+                AppContent(
+                    taskState = taskState,
+                    onTaskEvent = taskViewModel::onEvent,
+                    petState = petState,
+                    onPetEvent = petViewModel::onEvent,
+                )
+            }
+            //PetCareAppUi()
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun AppContent(
+    taskState: TaskState,
+    onTaskEvent: (TaskEvent) -> Unit,
+    petState: PetState,
+    onPetEvent: (PetEvent) -> Unit
+) {
+    var currPageInd by remember { mutableIntStateOf(-3) }
+    val appState = rememberAppState()
+    Scaffold(
+        bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = appState.scaffoldState.snackbarHostState,
+                modifier = Modifier.padding(8.dp),
+                snackbar = { snackbarData ->
+                    Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)
+                }
+            )
+        },
+    ) { innerPadding ->
+        Surface(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            when (currPageInd) {
+                -3 -> LandingScreen(
+                    goSignInPage = { currPageInd = -2 },
+                    goCreateAccountPage = { currPageInd = -1 },
+                )
+                -2 -> SignInScreen(
+                    goLandingPage = { currPageInd = -3 },
+                    goCreateAccountPage = { currPageInd = -1 })
+                -1 -> CreateAccountScreen(
+                    goLandingPage = { currPageInd = -3 },
+                    goSignInPage = { currPageInd = -2 },
+                    goHomePage = {currPageInd = 1}
+                )
+                0 -> ProfilePage()
+                1 -> HomePage(taskState, onTaskEvent)
+                2 -> PetsPage(petState, onPetEvent)
             }
         }
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun AppContent(
-//    taskState: TaskState,
-//    onTaskEvent: (TaskEvent) -> Unit,
-//    petState: PetState,
-//    onPetEvent: (PetEvent) -> Unit
-//) {
-//    var currPageInd by remember { mutableIntStateOf(-1) }
-//    val appState = rememberAppState()
-//    Scaffold(
-//        bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } },
-//        snackbarHost = {
-//            SnackbarHost(
-//                hostState = appState.scaffoldState.snackbarHostState,
-//                modifier = Modifier.padding(8.dp),
-//                snackbar = { snackbarData ->
-//                    Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)
-//                }
-//            )
-//        },
-//    ) { innerPadding ->
-//        Surface(
-//            modifier = Modifier
-//                .padding(innerPadding)
-//                .fillMaxSize(),
-//            color = MaterialTheme.colorScheme.background
-//        ) {
-//            when (currPageInd) {
-//                -1 -> LandingScreen() //TODO
-//                0 -> ProfilePage()
-//                1 -> HomePage(taskState, onTaskEvent)
-//                2 -> PetsPage(petState,onPetEvent)
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
+    if(selectedItem<0) return
     val items = listOf("Profile", "Home", "Pets")
     NavigationBar {
         items.forEachIndexed { index, item ->
@@ -220,7 +224,10 @@ fun PetCareAppUi() {
                         hostState = appState.scaffoldState.snackbarHostState,
                         modifier = Modifier.padding(8.dp),
                         snackbar = { snackbarData ->
-                            Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)
+                            Snackbar(
+                                snackbarData,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            )
                         }
                     )
                 },
@@ -231,8 +238,7 @@ fun PetCareAppUi() {
                         startDestination = LANDING_SCREEN, // Update with your start destination
                         modifier = Modifier.padding(innerPadding)
                     ) {
-                        // Add composables defined in your navigation graph
-                        petCareAppGraph(appState = appState)
+                        //petCareAppGraph(appState = appState)
                     }
                 }
             )
@@ -259,24 +265,17 @@ fun resources(): Resources {
     return LocalContext.current.resources
 }
 
-@ExperimentalMaterialApi
-fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
-    composable(LANDING_SCREEN) {
-        LandingScreen(
-            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) },
-            openScreen = { route -> appState.navigate(route) }
-        )
-    }
-
-    composable(HOME_SCREEN) {
-//        HomeScreen()
-    }
-
-    composable(LOGIN_SCREEN) {
-        LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-    }
-
-    composable(SIGN_UP_SCREEN) {
-        SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
-    }
-}
+//@ExperimentalMaterialApi
+//fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
+//    composable(LANDING_SCREEN) {
+//        LandingScreen( openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }, openScreen = { route -> appState.navigate(route) } )
+//    }
+//    composable(HOME_SCREEN) {}
+//    composable(LOGIN_SCREEN) {
+//        LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+//    }
+//
+//    composable(SIGN_UP_SCREEN) {
+//        SignUpScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+//    }
+//}

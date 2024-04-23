@@ -4,54 +4,34 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import com.example.makeitso.common.composable.BasicButton
-import com.example.makeitso.common.composable.BasicTextButton
+import androidx.compose.ui.unit.sp
+//import com.example.makeitso.common.composable.BasicButton
+//import com.example.makeitso.common.composable.BasicTextButton
 import com.example.petcareapp.R
 import com.example.petcareapp.common.ext.basicButton
-import com.example.petcareapp.common.ext.spacer
-import com.example.petcareapp.ui.theme.PetCareAppTheme
-import kotlinx.coroutines.delay
-import com.example.petcareapp.R.string as AppText
 
 @Composable
 fun LandingScreen (
-    openAndPopUp: (String, String) -> Unit,
-    openScreen: (String) -> Unit,
-    viewModel: LandingScreenViewModel = hiltViewModel()
-) {
-    LandingScreenContent(
-        onAppStart = { viewModel.onAppStart(openAndPopUp) },
-        onLoginClick = { viewModel.onLoginClick(openScreen) },
-        onSignUpClick = { viewModel.onSignUpClick(openScreen) },
-    )
-}
-
-@Composable
-fun LandingScreenContent (
-    modifier: Modifier = Modifier,
-    onAppStart: () -> Unit,
-    onSignUpClick: () -> Unit,
-    onLoginClick: () -> Unit
+    goSignInPage:()-> Unit,
+    goCreateAccountPage:()-> Unit
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
             .background(color = MaterialTheme.colors.background)
@@ -69,27 +49,28 @@ fun LandingScreenContent (
         )
 
         Column {
-            BasicButton(text = AppText.sign_in, Modifier.basicButton()) {
-                onLoginClick()
+            BasicButton(text = "Sign In", Modifier.basicButton()) {
+                goSignInPage()
             }
-            BasicButton(text = AppText.create_account, Modifier.basicButton()) {
-                onSignUpClick()
+            BasicButton(text = "Create Account", Modifier.basicButton()) {
+                goCreateAccountPage()
             }
         }
 
-        LaunchedEffect(true) {
-            onAppStart()
-        }
     }
 }
-@Preview(showBackground = true)
+
 @Composable
-fun LandingScreenPreview() {
-    PetCareAppTheme {
-        LandingScreenContent(
-            onAppStart = { },
-            onLoginClick = { },
-            onSignUpClick = {}
+fun BasicButton(text: String, modifier: Modifier, action: () -> Unit) {
+    Button(
+        onClick = action,
+        modifier = modifier,
+        colors =
+        ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary
         )
+    ) {
+        Text(text = text, fontSize = 16.sp)
     }
 }
