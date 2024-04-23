@@ -36,7 +36,6 @@ fun LandingScreen (
     openScreen: (String) -> Unit,
     viewModel: LandingScreenViewModel = hiltViewModel()
 ) {
-//    val uiState by viewModel.uiState
     LandingScreenContent(
         onAppStart = { viewModel.onAppStart(openAndPopUp) },
         onLoginClick = { viewModel.onLoginClick(openScreen) },

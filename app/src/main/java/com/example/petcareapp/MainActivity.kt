@@ -122,9 +122,19 @@ fun AppContent(
     petState: PetState,
     onPetEvent: (PetEvent) -> Unit
 ) {
-    var currPageInd by remember { mutableIntStateOf(1) }
+    var currPageInd by remember { mutableIntStateOf(-1) }
+    val appState = rememberAppState()
     Scaffold(
-        bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
+        bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = appState.scaffoldState.snackbarHostState,
+                modifier = Modifier.padding(8.dp),
+                snackbar = { snackbarData ->
+                    Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)
+                }
+            )
+        },
     ) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -133,6 +143,7 @@ fun AppContent(
             color = MaterialTheme.colorScheme.background
         ) {
             when (currPageInd) {
+                -1 -> LandingScreen() //TODO
                 0 -> ProfilePage()
                 1 -> HomePage(taskState, onTaskEvent)
                 2 -> PetsPage(petState,onPetEvent)
