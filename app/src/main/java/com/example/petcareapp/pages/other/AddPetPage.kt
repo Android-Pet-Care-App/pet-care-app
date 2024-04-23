@@ -47,11 +47,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import com.example.petcareapp.data.pets.Pet
+import com.example.petcareapp.data.pets.PetEvent
+import com.example.petcareapp.data.pets.PetState
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateAddPetPage(onBack: () -> Unit) {
+fun CreateAddPetPage(
+    petState: PetState,
+    onPetEvent: (PetEvent) -> Unit,
+    onBack: () -> Unit
+) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -68,158 +77,45 @@ fun CreateAddPetPage(onBack: () -> Unit) {
         )
 
 
-        var petName by remember { mutableStateOf("") }
-        HeadingTextForPetTask("Pet Name")
-        TextField(
-            value = petName,
-            onValueChange = { petName = it },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text(text = "e.g. Yogi") },
-        )
+        FormTextInput("Pet Name","e.g. Yogi",petState.petName.value) { newName -> petState.petName.value = newName }
 
+        val animalOpts = listOf("Dog", "Cat", "Fish")
+        DropDownSelect("Select Animal", animalOpts, petState.animal.value) { newOpt -> petState.animal.value = newOpt }
 
-        var petType by remember { mutableStateOf(false) }
-        val options = listOf("No Selection", "Dog", "Cat", "Fish")
-        var selectedIndex by remember { mutableIntStateOf(0) }
-        HeadingTextForPetTask("Select Pet Type")
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .height(34.dp)
-                .background(Color("#dde3ea".toColorInt()))
-                .wrapContentSize(Alignment.TopStart)
-        )
-        {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxSize()
-                    .clickable(onClick = { petType = true }),
-                horizontalArrangement = Arrangement.SpaceBetween, // This ensures space distribution between elements
-                verticalAlignment = Alignment.CenterVertically // This centers the elements vertically in the Row
-            ) {
-                Text(
-                    text = options[selectedIndex],
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Icon(
-                    imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "down arrow",
-                    modifier = Modifier.size(24.dp) // Ensures the Icon has a specific size, making it more likely to be visible
-                )
+        val breedOpts = listOf("German Sheared", "Pit-bull", "Fish")
+        DropDownSelect("Select Breed", breedOpts, petState.breed.value) { newOpt -> petState.breed.value = newOpt }
+
+        val selectedDate = remember { mutableStateOf("") }
+        HeadingTextForFormData(heading = "Pet Birthday (optional)")
+        Row {
+            DatePickerButton(selectedDate)
+            Button(onClick = {selectedDate.value = ""}) { Text(text = "Clear Date") }
+        }
+
+        SubmitButton(title = "Add Pet") {
+            if(petState.petName.value.isBlank()){
+                Toast.makeText(context,"Pet Name is empty",Toast.LENGTH_LONG).show()
+                return@SubmitButton
             }
-            DropdownMenu(
-                expanded = petType,
-                onDismissRequest = { petType = false },
-                modifier = Modifier.fillMaxWidth(),
-                content = {
-                    options.forEachIndexed { index, option ->
-                        DropdownMenuItem(
-                            text = { Text(text = option) },
-                            onClick = {
-                                selectedIndex = index
-                                petType = false
-                            }
-                        )
-                    }
-                }
+            if(petState.animal.value.isBlank()){
+                Toast.makeText(context,"Animal is empty",Toast.LENGTH_LONG).show()
+                return@SubmitButton
+            }
+            if(petState.breed.value.isBlank()){
+                Toast.makeText(context,"Breed is empty",Toast.LENGTH_LONG).show()
+                return@SubmitButton
+            }
+
+            val thePet = Pet(
+                petName = petState.petName.value,
+                animal = petState.animal.value,
+                breed = petState.breed.value,
+                petAge = if (selectedDate.value=="") 0 else convertDateToUnixTime(selectedDate.value),
+                dateAdded = System.currentTimeMillis(),
             )
-        }
-
-        HeadingTextForPetTask("Select Task")
-        SelectPetMenuComponent()
-
-        SubmitPetComponent(petName, selectedIndex, onBack)
-    }
-}
-
-@Composable
-fun HeadingTextForPetTask(heading: String) {
-    Spacer(modifier = Modifier.padding(8.dp))
-    Text(
-        text = heading,
-        style = MaterialTheme.typography.bodyLarge
-    )
-}
-
-@Composable
-fun SelectPetMenuComponent() {
-    var selectedOption by remember { mutableStateOf("") }
-    val options = listOf("Walk", "Feed", "Change Litter")
-
-    Column {
-        Row(
-            modifier = Modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            options.forEach { option ->
-                Button(
-                    onClick = { selectedOption = option },
-                    modifier = Modifier
-                        .padding(1.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selectedOption == option ) Color.Blue else Color.LightGray
-                    )
-                ) {
-                    Text(
-                        text = option,
-                        color = Color.White,
-                        fontSize = 16.sp
-                    )
-                }
-            }
-        }
-
-        var customTask by remember { mutableStateOf("") }
-
-        HeadingTextForPetTask("Custom Task")
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .background(Color.Transparent)
-                .fillMaxWidth()
-                .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-                .padding(horizontal = 8.dp, vertical = 6.dp)
-        ) {
-            BasicTextField(
-                value = customTask,
-                onValueChange = {
-                    customTask = it
-                },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth()
-            )
+            onPetEvent(PetEvent.SavePet(thePet))
+            onBack()
+            Toast.makeText(context,"Pet Added",Toast.LENGTH_LONG).show()
         }
     }
 }
-
-
-@Composable
-fun SubmitPetComponent(petName: String, selectedIndex: Int, onBack: () -> Unit) {
-    val context = LocalContext.current
-
-    Button(
-        onClick = {
-            if (petName.isNotEmpty() && selectedIndex != 0) {
-                Toast.makeText(context, "Pet was submitted", Toast.LENGTH_SHORT).show()
-
-                onBack()
-            } else {
-                if (petName.isEmpty()) {
-                    Toast.makeText(context, "Please enter a pet name", Toast.LENGTH_SHORT).show()
-                }
-                if (selectedIndex == 0) {
-                    Toast.makeText(context, "Please select a pet type", Toast.LENGTH_SHORT).show()
-                }
-            }
-        },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Text("Add Pet")
-    }
-}
-

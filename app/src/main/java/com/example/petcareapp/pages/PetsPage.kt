@@ -1,4 +1,4 @@
-package com.example.petcareapp
+package com.example.petcareapp.pages
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,12 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-
-//import androidx.compose.material.Button
-//import androidx.compose.material.ButtonDefaults
-//import androidx.compose.material.MaterialTheme
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,22 +25,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.petcareapp.CreateAddPetPage
+import com.example.petcareapp.SubmitButton
+import com.example.petcareapp.data.pets.Pet
+import com.example.petcareapp.data.pets.PetEvent
+import com.example.petcareapp.data.pets.PetState
+import com.example.petcareapp.getAgeStringFromUnixTime
+import com.example.petcareapp.getDateFromUnixTime
 
 @Composable
-fun PetsPage(title: String) {
+fun PetsPage(
+    petState: PetState,
+    onPetEvent: (PetEvent) -> Unit
+) {
+
     var showAddPet by remember { mutableStateOf(false) }
     if(showAddPet){
-        CreateAddPetPage(onBack = { showAddPet = false })
+        CreateAddPetPage(petState,onPetEvent,onBack = { showAddPet = false })
         return
     }
 
     Text(
-        text = title,
+        text = "My Pets",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 16.dp, start = 15.dp)
     )
@@ -54,34 +61,24 @@ fun PetsPage(title: String) {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PetItem(name = "Fluffy")
-        PetItem(name = "Spot")
-        PetItem(name = "Whiskers")
 
-        Button(
-            onClick = { showAddPet = true },
+        LazyColumn(
             modifier = Modifier
-                .padding(top = 16.dp)
-                .height(48.dp)
-                .padding(horizontal = 125.dp),
-            elevation = ButtonDefaults.buttonElevation( // Adjust elevation for 3D effect
-                defaultElevation = 4.dp,
-                pressedElevation = 8.dp
-            ),
-            colors = ButtonDefaults.buttonColors(
-                //containerColor = MaterialTheme.colorScheme.primaryContainer,
-                containerColor = Color.Blue,
-                contentColor = Color.White // Text color
-            )
+                .weight(1f)
+                .fillMaxSize()
         ) {
-            Text("Add Pet")
+            items(petState.pets) { pet ->
+                PetItem(pet)
+            }
         }
+
+        SubmitButton(title = "Add Pet") { showAddPet = true }
     }
 }
 
 
 @Composable
-fun PetItem(name: String) {
+fun PetItem(pet: Pet) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,17 +90,14 @@ fun PetItem(name: String) {
                 .size(40.dp)
                 .background(Color.LightGray, shape = CircleShape) // Use CircleShape here
         ) {
-            // You can replace this with actual pet image/icon
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            color = Color.Black,
-            modifier = Modifier.weight(1f)
-        )
-        ThreeDots()
     }
+    Text( text = pet.petName)
+    Text( text = pet.animal)
+    Text( text = pet.breed)
+    Text( text = getAgeStringFromUnixTime(pet.petAge))
+    Text( text = getDateFromUnixTime(pet.dateAdded))
 }
 
 @Composable

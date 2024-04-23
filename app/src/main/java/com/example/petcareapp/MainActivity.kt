@@ -36,27 +36,37 @@ import com.example.petcareapp.data.tasks.TaskDatabase
 import com.example.petcareapp.data.tasks.TaskEvent
 import com.example.petcareapp.data.tasks.TaskState
 import com.example.petcareapp.data.tasks.TaskViewModel
+
+import com.example.petcareapp.data.pets.PetDatabase
+import com.example.petcareapp.data.pets.PetEvent
+import com.example.petcareapp.data.pets.PetState
+import com.example.petcareapp.data.pets.PetViewModel
 import com.example.petcareapp.pages.HomePage
+import com.example.petcareapp.pages.PetsPage
 import com.example.petcareapp.ui.theme.PetCareAppTheme
 
-class MainActivity : ComponentActivity() {
-    private val db by lazy{
-        Room.databaseBuilder(
-            applicationContext,
-            TaskDatabase::class.java,
-            "tasks.db"
-        ).build()
-    }
 
-    private val taskViewModel by viewModels<TaskViewModel>(
-        factoryProducer =  {
-            object : ViewModelProvider.Factory{
+class MainActivity : ComponentActivity() {
+    private val taskDb by lazy { Room.databaseBuilder( applicationContext, TaskDatabase::class.java, "tasks.db" ).build() }
+    private val taskViewModel by viewModels<TaskViewModel>(factoryProducer = {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return TaskViewModel(taskDb.taskDao) as T
+            }
+        }
+    })
+
+    private val petsDB by lazy { Room.databaseBuilder( applicationContext, PetDatabase::class.java, "pets.db" ).build() }
+    private val petViewModel by viewModels<PetViewModel>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return TaskViewModel(db.dao) as T
+                    return PetViewModel(petsDB.petDao) as T
                 }
             }
         }
     )
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +74,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             PetCareAppTheme {
                 val taskState by taskViewModel.state.collectAsState()
-                AppContent(taskState = taskState, onTaskEvent = taskViewModel::onEvent)
+                val petState by petViewModel.state.collectAsState()
+                AppContent(
+                    taskState = taskState,
+                    onTaskEvent = taskViewModel::onEvent,
+                    petState = petState,
+                    onPetEvent = petViewModel::onEvent,
+                )
             }
         }
     }
@@ -74,20 +90,24 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppContent(
     taskState: TaskState,
-    onTaskEvent: (TaskEvent) -> Unit
+    onTaskEvent: (TaskEvent) -> Unit,
+    petState: PetState,
+    onPetEvent: (PetEvent) -> Unit
 ) {
     var currPageInd by remember { mutableIntStateOf(1) }
     Scaffold(
         bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } }
     ) { innerPadding ->
         Surface(
-            modifier = Modifier.padding(innerPadding).fillMaxSize(),
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
             when (currPageInd) {
                 0 -> ProfilePage()
-                1 -> HomePage(taskState,onTaskEvent)
-                2 -> PetsPage(title = "My Pets")
+                1 -> HomePage(taskState, onTaskEvent)
+                2 -> PetsPage(petState,onPetEvent)
             }
         }
     }
