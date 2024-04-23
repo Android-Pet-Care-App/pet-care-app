@@ -14,10 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 
-//import androidx.compose.material.Button
-//import androidx.compose.material.ButtonDefaults
-//import androidx.compose.material.MaterialTheme
-
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +60,7 @@ fun PetsPage(title: String) {
                 .padding(top = 16.dp)
                 .height(48.dp)
                 .padding(horizontal = 125.dp),
-            elevation = ButtonDefaults.buttonElevation( // Adjust elevation for 3D effect
+            elevation = ButtonDefaults.buttonElevation(
                 defaultElevation = 4.dp,
                 pressedElevation = 8.dp
             ),
@@ -93,7 +89,6 @@ fun PetItem(name: String) {
                 .size(40.dp)
                 .background(Color.LightGray, shape = CircleShape) // Use CircleShape here
         ) {
-            // You can replace this with actual pet image/icon
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
