@@ -25,8 +25,8 @@ fun ProfilePage() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
-                .background(Color(0xFFAED581))
+                .height(75.dp)
+                .background(Color(0xFF6650a4))
         ) {
             Icon(
                 imageVector = Icons.Default.Settings,
@@ -35,7 +35,7 @@ fun ProfilePage() {
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp)
-                    .size(30.dp)
+                    .size(50.dp)
             )
         }
 
@@ -46,13 +46,15 @@ fun ProfilePage() {
         ) {
             Box(
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(150.dp)
                     .clip(CircleShape)
                     .background(Color.Gray)
                     .align(Alignment.CenterHorizontally)
             ) {
                 // Placeholder for the avatar image
             }
+
+            Spacer(modifier = Modifier.height(30.dp))
 
             val name = remember { mutableStateOf("Yogi S.") }
             Text(
