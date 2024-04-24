@@ -33,7 +33,6 @@ class CreateTaskScreenViewModel @Inject constructor(
         }
     }
 
-
     fun onTaskNameChange(newValue: String) {
         task.value = task.value.copy(taskName = newValue)
     }

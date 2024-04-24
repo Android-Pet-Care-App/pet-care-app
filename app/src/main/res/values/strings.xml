@@ -37,4 +37,10 @@
     <string name="due_date">Due date</string>
     <string name="due_time">Due time</string>
 
+
+    <!--    CreatePetScreen-->
+    <string name="create_pet">Create pet</string>
+    <string name="animal_type">Animal type</string>
+    <string name="pet_breed">Breed</string>
+    <string name="pet_age">Due date</string>
 </resources>

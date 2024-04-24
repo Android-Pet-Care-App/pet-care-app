@@ -55,8 +55,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.petcareapp.screens.create_pet.CreatePetScreen
 import com.example.petcareapp.screens.login.LoginScreen
 import com.example.petcareapp.screens.create_task.CreateTaskScreen
+import com.example.petcareapp.screens.home.HomeScreen
 import com.example.petcareapp.screens.landing.LandingScreen
 import com.example.petcareapp.screens.sign_up.SignUpScreen
 
@@ -258,7 +260,7 @@ fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
     }
 
     composable(HOME_SCREEN) {
-//        HomeScreen()
+        HomeScreen()
     }
 
     composable(LOGIN_SCREEN) {
@@ -277,6 +279,18 @@ fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
         })
     ) {
         CreateTaskScreen(
+            popUpScreen = { appState.popUp() }
+        )
+    }
+
+    composable(
+        route = "$CREATE_PET_SCREEN$TASK_ID_ARG",
+        arguments = listOf(navArgument(PET_ID) {
+            nullable = true
+            defaultValue = null
+        })
+    ) {
+        CreatePetScreen(
             popUpScreen = { appState.popUp() }
         )
     }

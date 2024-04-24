@@ -49,6 +49,25 @@ fun BasicField(
 }
 
 @Composable
+fun NumberField(
+  @StringRes text: Int,
+  value: Int,
+  onNewValue: (Int) -> Unit,
+  modifier: Modifier = Modifier
+) {
+  OutlinedTextField(
+    singleLine = true,
+    modifier = modifier,
+    value = value.toString(),
+    onValueChange = { onNewValue(it.toInt()) },
+    keyboardOptions = KeyboardOptions.Default.copy(
+      keyboardType = KeyboardType.Number
+    ),
+    label = { Text(stringResource(text)) }
+  )
+}
+
+@Composable
 fun EmailField(value: String, onNewValue: (String) -> Unit, modifier: Modifier = Modifier) {
   OutlinedTextField(
     singleLine = true,
