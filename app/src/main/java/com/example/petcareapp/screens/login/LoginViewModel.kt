@@ -64,7 +64,7 @@ class LoginViewModel @Inject constructor(
 
     launchCatching {
       accountService.authenticate(email, password)
-      openAndPopUp(HOME_SCREEN, LOGIN_SCREEN)
+      openAndPopUp(CREATE_PET_SCREEN, LOGIN_SCREEN)
     }
   }
 
