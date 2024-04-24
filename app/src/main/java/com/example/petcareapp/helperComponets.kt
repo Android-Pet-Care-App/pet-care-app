@@ -41,6 +41,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import androidx.compose.material3.Surface
+import com.example.petcareapp.model.Task
+import androidx.compose.ui.text.style.TextAlign
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun SubmitButton(title: String, onClick: () -> Unit) {
@@ -142,46 +147,86 @@ fun DropDownSelect(
 
 
 @Composable
-fun DatePickerButton(selectedDate: MutableState<String>) {
+fun DatePickerButton(
+    task: Task,
+    onDueDateChange: (Long) -> Unit,
+) {
     val months =
         listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sept", "Oct", "Nov", "Dec")
     val context = LocalContext.current
+    val calendar = Calendar.getInstance()
+
     val datePickerDialog = DatePickerDialog(
         context,
         { _, year, monthInd, dayOfMonth ->
-            selectedDate.value = months[monthInd].plus(" $dayOfMonth, $year")
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, monthInd)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+            val formattedDate = SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH).format(calendar.time)
+            val milliseconds = calendar.timeInMillis
+
+            // Invoke the callback with the long value representing the date
+            onDueDateChange(milliseconds)
         },
-        Calendar.getInstance().get(Calendar.YEAR),
-        Calendar.getInstance().get(Calendar.MONTH),
-        Calendar.getInstance().get(Calendar.DAY_OF_MONTH),
+        calendar.get(Calendar.YEAR),
+        calendar.get(Calendar.MONTH),
+        calendar.get(Calendar.DAY_OF_MONTH),
     )
-    val btnText = if (selectedDate.value == "") "Choose Date" else selectedDate.value
-    Button(
-        content = { Text(text = btnText, color = Color.Black) },
-        onClick = { datePickerDialog.show() },
-        shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color("#dde3ea".toColorInt()))
-    )
+
+    val btnText = if (task.dueDate.isBlank()) "Choose Date" else task.dueDate
+    Surface(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(
+            onClick = { datePickerDialog.show() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        ) {
+            Text(
+                text = btnText,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+    }
 }
 
 @Composable
-fun TimePickerButton(selectedTime: MutableState<String>) {
+fun TimePickerButton(
+    task: Task,
+    onTimeChange: (Int, Int) -> Unit
+) {
     val context = LocalContext.current
     val cal = Calendar.getInstance()
     val mHour = cal[Calendar.HOUR_OF_DAY]
     val mMinute = cal[Calendar.MINUTE]
     val mTimePickerDialog = TimePickerDialog(
         context, { _, mHour: Int, mMinute: Int ->
-            selectedTime.value = "$mHour:$mMinute"
+            onTimeChange(mHour, mMinute)
         }, mHour, mMinute, false
     )
     val btnText =
-        if (selectedTime.value == "") "Choose Time" else getTimeWithAmPm(selectedTime.value)
-    Button(
-        content = { Text(text = btnText, color = Color.Black) },
-        onClick = { mTimePickerDialog.show() },
-        shape = RoundedCornerShape(4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color("#dde3ea".toColorInt())),
-    )
+        if (task.dueTime == "") "Choose Time" else getTimeWithAmPm(task.dueTime)
+
+    Surface(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(
+            onClick = { mTimePickerDialog.show() },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        ){
+            Text(
+                text = btnText,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        }
+    }
 }
 

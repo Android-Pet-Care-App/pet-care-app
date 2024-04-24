@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import com.example.makeitso.common.composable.BasicButton
-import com.example.makeitso.common.composable.BasicTextButton
+import com.example.petcareapp.common.composable.BasicButton
+import com.example.petcareapp.common.composable.BasicTextButton
 import com.example.petcareapp.R
 import com.example.petcareapp.common.ext.basicButton
 import com.example.petcareapp.common.ext.spacer

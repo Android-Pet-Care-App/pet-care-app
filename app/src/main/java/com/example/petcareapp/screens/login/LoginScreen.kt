@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.makeitso.screens.login
+package com.example.petcareapp.screens.login
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -25,11 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.makeitso.common.composable.BasicButton
-import com.example.makeitso.common.composable.BasicTextButton
-import com.example.makeitso.common.composable.BasicToolbar
-import com.example.makeitso.common.composable.EmailField
-import com.example.makeitso.common.composable.PasswordField
+import com.example.makeitso.screens.login.LoginUiState
+import com.example.makeitso.screens.login.LoginViewModel
+import com.example.petcareapp.common.composable.BasicButton
+import com.example.petcareapp.common.composable.BasicTextButton
+import com.example.petcareapp.common.composable.BasicToolbar
+import com.example.petcareapp.common.composable.EmailField
+import com.example.petcareapp.common.composable.PasswordField
 import com.example.petcareapp.R.string as AppText
 import com.example.petcareapp.common.composable.*
 import com.example.petcareapp.common.ext.basicButton

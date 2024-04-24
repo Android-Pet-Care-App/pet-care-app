@@ -1,4 +1,4 @@
-package com.example.makeitso.common.composable
+package com.example.petcareapp.common.composable
 
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.ButtonDefaults

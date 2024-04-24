@@ -57,6 +57,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:21.1.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.11.0")
     val lifecycle_version = "2.7.0"
     val arch_version = "2.2.0"
     val nav_version = "2.7.7"

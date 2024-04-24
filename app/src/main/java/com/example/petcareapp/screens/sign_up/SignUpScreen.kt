@@ -8,11 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.makeitso.common.composable.BasicButton
-import com.example.makeitso.common.composable.BasicToolbar
-import com.example.makeitso.common.composable.EmailField
-import com.example.makeitso.common.composable.PasswordField
-import com.example.makeitso.common.composable.RepeatPasswordField
+import com.example.petcareapp.common.composable.BasicButton
+import com.example.petcareapp.common.composable.BasicToolbar
+import com.example.petcareapp.common.composable.EmailField
+import com.example.petcareapp.common.composable.PasswordField
+import com.example.petcareapp.common.composable.RepeatPasswordField
 import com.example.petcareapp.R.string as AppText
 import com.example.petcareapp.common.composable.*
 import com.example.petcareapp.common.ext.basicButton

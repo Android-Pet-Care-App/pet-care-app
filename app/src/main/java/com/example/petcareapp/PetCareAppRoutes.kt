@@ -5,7 +5,7 @@ const val HOME_SCREEN = "HomeScreen"
 const val LOGIN_SCREEN = "LoginScreen"
 const val SIGN_UP_SCREEN = "SignUpScreen"
 const val TASKS_SCREEN = "TasksScreen"
-const val EDIT_TASK_SCREEN = "EditTaskScreen"
+const val CREATE_TASK_SCREEN = "CreateTaskScreen"
 const val STATS_SCREEN = "StatsScreen"
 
 const val TASK_ID = "taskId"

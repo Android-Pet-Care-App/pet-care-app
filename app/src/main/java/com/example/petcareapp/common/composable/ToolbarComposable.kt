@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
  */
 
-package com.example.makeitso.common.composable
+package com.example.petcareapp.common.composable
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes

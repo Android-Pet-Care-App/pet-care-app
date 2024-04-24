@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.petcareapp.DatePickerButton
 import com.example.petcareapp.DropDownSelect
@@ -68,9 +69,8 @@ fun CreateTaskPage(
         DropDownSelect("Select Pet",options,taskState.petName.value) { newOpt -> taskState.petName.value = newOpt }
         HeadingTextForFormData(heading = "Due")
         Row {
-            DatePickerButton(selectedDate)
-            Spacer(modifier = Modifier.padding(8.dp))
-            TimePickerButton(selectedTime)
+//            DatePickerButton(selectedDate)
+//            TimePickerButton(selectedTime)
         }
 
         SubmitButton("Create Task") {
@@ -100,6 +100,17 @@ fun CreateTaskPage(
             onBack()
         }
     }
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
+@Composable
+fun CreateTaskPagePreview() {
+    val taskState = TaskState()
+    CreateTaskPage(
+        taskState = taskState,
+        onTaskEvent = { /* Define action for task event */ },
+        onBack = { /* Define action for back button */ }
+    )
 }
 
 

@@ -17,6 +17,7 @@ limitations under the License.
 package com.example.makeitso.screens.login
 
 import androidx.compose.runtime.mutableStateOf
+import com.example.petcareapp.CREATE_TASK_SCREEN
 import com.example.petcareapp.LOGIN_SCREEN
 import com.example.petcareapp.R.string as AppText
 import com.example.petcareapp.HOME_SCREEN
@@ -62,7 +63,7 @@ class LoginViewModel @Inject constructor(
 
     launchCatching {
       accountService.authenticate(email, password)
-      openAndPopUp(HOME_SCREEN, LOGIN_SCREEN)
+      openAndPopUp(CREATE_TASK_SCREEN, LOGIN_SCREEN)
     }
   }
 
