@@ -46,17 +46,21 @@ fun ProfilePage() {
         ) {
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(125.dp)
                     .clip(CircleShape)
-                    .background(Color.Gray)
                     .align(Alignment.CenterHorizontally)
             ) {
-                // Placeholder for the avatar image
+                Image(
+                    painter = painterResource(id = R.drawable.paw_icon), // Make sure the resource name matches your file name
+                    contentDescription = "Profile Image",
+                    modifier = Modifier.fillMaxSize()
+                )
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
 
-            val name = remember { mutableStateOf("Yogi S.") }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            val name = remember { mutableStateOf("Gian Singh") }
             Text(
                 text = name.value,
                 fontWeight = FontWeight.Bold,
