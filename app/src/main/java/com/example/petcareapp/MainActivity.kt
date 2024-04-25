@@ -55,145 +55,30 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.petcareapp.screens.bottom_navigation.BottomNavigation
 import com.example.petcareapp.screens.create_pet.CreatePetScreen
 import com.example.petcareapp.screens.login.LoginScreen
 import com.example.petcareapp.screens.create_task.CreateTaskScreen
 import com.example.petcareapp.screens.home.HomeScreen
 import com.example.petcareapp.screens.landing.LandingScreen
+import com.example.petcareapp.screens.pets.PetScreen
+import com.example.petcareapp.screens.profile.ProfileScreen
 import com.example.petcareapp.screens.sign_up.SignUpScreen
 
 @AndroidEntryPoint
 @ExperimentalMaterialApi
 class MainActivity : AppCompatActivity() {
-    private val taskDb by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            TaskDatabase::class.java,
-            "tasks.db"
-        ).build()
-    }
-    private val taskViewModel by viewModels<TaskViewModel>(factoryProducer = {
-        object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return TaskViewModel(taskDb.taskDao) as T
-            }
-        }
-    })
-
-    private val petsDB by lazy {
-        Room.databaseBuilder(
-            applicationContext,
-            PetDatabase::class.java,
-            "pets.db"
-        ).build()
-    }
-    private val petViewModel by viewModels<PetViewModel>(
-        factoryProducer = {
-            object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PetViewModel(petsDB.petDao) as T
-                }
-            }
-        }
-    )
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetCareAppTheme {
-                val taskState by taskViewModel.state.collectAsState()
-                val petState by petViewModel.state.collectAsState()
-//                AppContent(
-//                    taskState = taskState,
-//                    onTaskEvent = taskViewModel::onEvent,
-//                    petState = petState,
-//                    onPetEvent = petViewModel::onEvent,
-//                )
-//            }
                 PetCareAppUi()
             }
         }
     }
 }
 
-//@RequiresApi(Build.VERSION_CODES.O)
-//@Composable
-//fun AppContent(
-//    taskState: TaskState,
-//    onTaskEvent: (TaskEvent) -> Unit,
-//    petState: PetState,
-//    onPetEvent: (PetEvent) -> Unit
-//) {
-//    var currPageInd by remember { mutableIntStateOf(-1) }
-//    val appState = rememberAppState()
-//    Scaffold(
-//        bottomBar = { BottomNavigationBar(currPageInd) { index -> currPageInd = index } },
-//        snackbarHost = {
-//            SnackbarHost(
-//                hostState = appState.scaffoldState.snackbarHostState,
-//                modifier = Modifier.padding(8.dp),
-//                snackbar = { snackbarData ->
-//                    Snackbar(snackbarData, contentColor = MaterialTheme.colorScheme.onPrimary)
-//                }
-//            )
-//        },
-//    ) { innerPadding ->
-//        Surface(
-//            modifier = Modifier
-//                .padding(innerPadding)
-//                .fillMaxSize(),
-//            color = MaterialTheme.colorScheme.background
-//        ) {
-//            when (currPageInd) {
-//                -1 -> LandingScreen() //TODO
-//                0 -> ProfilePage()
-//                1 -> HomePage(taskState, onTaskEvent)
-//                2 -> PetsPage(petState,onPetEvent)
-//            }
-//        }
-//    }
-//}
-
-@Composable
-fun BottomNavigationBar(selectedItem: Int, onItemSelected: (Int) -> Unit) {
-    val items = listOf("Profile", "Home", "Pets")
-    NavigationBar {
-        items.forEachIndexed { index, item ->
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        if (index == 0) Icons.Filled.Person
-                        else if (index == 1) Icons.Filled.Home
-                        else Icons.Filled.ShoppingCart,
-                        contentDescription = item
-                    )
-                },
-                label = { Text(item) },
-                selected = selectedItem == index,
-                onClick = {
-                    onItemSelected(index)
-                }
-            )
-        }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(text = "Hello $name!", modifier = modifier.padding(24.dp), color = Color.Black)
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    PetCareAppTheme {
-        //AppContent()
-    }
-}
-
-// NEW APP STRUCTURE
 @Composable
 @ExperimentalMaterialApi
 fun PetCareAppUi() {
@@ -202,9 +87,9 @@ fun PetCareAppUi() {
             val appState = rememberAppState()
             Scaffold(
                 topBar = { /* Define your top app bar */ },
-                bottomBar = { BottomNavigationBar(selectedItem = 0) {
-
-                } },
+                bottomBar = {
+                    BottomNavigation(openScreen = { route -> appState.navigate(route) })
+                },
                 floatingActionButton = { /* Define your floating action button */ },
                 floatingActionButtonPosition = FabPosition.End,
                 snackbarHost = {
@@ -263,6 +148,18 @@ fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
 
     composable(HOME_SCREEN) {
         HomeScreen(
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
+        )
+    }
+
+    composable(PROFILE_SCREEN) {
+        ProfileScreen(
+            openScreen = { route -> appState.navigate(route) }
+        )
+    }
+
+    composable(PET_SCREEN) {
+        PetScreen(
             openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
         )
     }

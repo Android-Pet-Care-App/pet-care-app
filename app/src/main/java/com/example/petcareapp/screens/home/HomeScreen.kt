@@ -97,7 +97,7 @@ fun HomeScreenContent (
 
     ) {
         Text(
-            text = "Today's Tasks",
+            text = "Pet Tasks",
             fontSize = 26.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(bottom = 16.dp)

@@ -42,5 +42,5 @@
     <string name="create_pet">Create pet</string>
     <string name="animal_type">Animal type</string>
     <string name="pet_breed">Breed</string>
-    <string name="pet_age">Due date</string>
+    <string name="pet_age">Age</string>
 </resources>
