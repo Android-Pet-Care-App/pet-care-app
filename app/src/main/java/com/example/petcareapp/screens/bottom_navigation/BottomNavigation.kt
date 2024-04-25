@@ -1,17 +1,25 @@
 package com.example.petcareapp.screens.bottom_navigation
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Icon
 import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
@@ -57,22 +65,21 @@ fun BottomNavigationContent (
                     toProfile()
                     Log.d("TEST", uiState.navButtons.toString())
                 },
-                icon = { Icons.Filled.Person }
+                icon = {
+                    androidx.compose.material3.Icon(imageVector = Icons.Filled.Person, contentDescription = "")
+                 }
             )
         }
 
         uiState.navButtons["home"]?.let { selected ->
-            NavigationBarItem(
-                selected = selected,
-                label = {
+            NavigationBarItem(selected = selected, label = {
                     Text(text = "Home")
-                },
-                onClick = {
+                }, onClick = {
                     toHome()
                     Log.d("TEST", uiState.navButtons.toString())
-                },
-                icon = { Icons.Filled.Home }
-            )
+                }, icon = {
+                    androidx.compose.material3.Icon(imageVector = Icons.Filled.Home, contentDescription = "")
+                })
         }
 
         uiState.navButtons["pets"]?.let { selected ->
@@ -82,7 +89,9 @@ fun BottomNavigationContent (
                     Text(text = "Pets")
                 },
                 onClick = { toPets() },
-                icon = { petsIcon }
+                icon = {
+                    androidx.compose.material3.Icon(painter = petsIcon, contentDescription = "")
+                }
             )
         }
     }
