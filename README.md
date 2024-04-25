@@ -188,4 +188,4 @@ from the original requirements
 
 ## App Demo Video
 
-https://github.com/Android-Pet-Care-App/pet-care-app/assets/17109419/4e225064-b778-49f1-a2ae-77331df0d6c1
+[https://github.com/Android-Pet-Care-App/pet-care-app/assets/17109419/4e225064-b778-49f1-a2ae-77331df0d6c1](https://youtu.be/mfDiQoSxuVc)
