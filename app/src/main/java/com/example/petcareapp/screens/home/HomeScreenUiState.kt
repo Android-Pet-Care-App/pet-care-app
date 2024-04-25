@@ -1,4 +1,7 @@
 package com.example.petcareapp.screens.home
 
-//data class HomeScreenUiState (
-//)
+import com.example.petcareapp.model.Task
+
+data class HomeScreenUiState (
+    var selectedTask: Task = Task()
+)

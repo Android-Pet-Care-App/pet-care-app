@@ -202,7 +202,9 @@ fun PetCareAppUi() {
             val appState = rememberAppState()
             Scaffold(
                 topBar = { /* Define your top app bar */ },
-                bottomBar = { /* Define your bottom navigation bar */ },
+                bottomBar = { BottomNavigationBar(selectedItem = 0) {
+
+                } },
                 floatingActionButton = { /* Define your floating action button */ },
                 floatingActionButtonPosition = FabPosition.End,
                 snackbarHost = {
@@ -260,7 +262,9 @@ fun NavGraphBuilder.petCareAppGraph(appState: PetCareAppState) {
     }
 
     composable(HOME_SCREEN) {
-        HomeScreen()
+        HomeScreen(
+            openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) }
+        )
     }
 
     composable(LOGIN_SCREEN) {

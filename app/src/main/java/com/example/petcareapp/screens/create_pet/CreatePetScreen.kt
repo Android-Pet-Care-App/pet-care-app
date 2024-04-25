@@ -1,5 +1,7 @@
 package com.example.petcareapp.screens.create_pet
 
+import android.content.Context
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.petcareapp.FormTextInput
 import com.example.petcareapp.common.composable.ActionToolbar
 import com.example.petcareapp.common.composable.BasicField
 import com.example.petcareapp.R.drawable as AppIcon
@@ -19,6 +22,7 @@ import com.example.petcareapp.common.ext.card
 import com.example.petcareapp.common.ext.fieldModifier
 import com.example.petcareapp.common.ext.spacer
 import com.example.petcareapp.common.ext.toolbarActions
+import com.example.petcareapp.helpers.ApiService
 import com.example.petcareapp.model.Pet
 
 @Composable
@@ -87,18 +91,55 @@ private fun CardSelectors(
     onAnimalTypeChange: (String) -> Unit,
     onBreedChange: (String) -> Unit
 ) {
-    val options1 = listOf("Type 1", "Type 2", "Type 3","Type 4")
+    val animalOpts = listOf("Dog", "Cat", "Other")
     val animalTypeSelection = pet.animalType
     // TODO: replace options with animal types from api
-    CardSelector(AppText.animal_type, options1, animalTypeSelection, Modifier.card()) {
+    CardSelector(AppText.animal_type, animalOpts, animalTypeSelection, Modifier.card()) {
             newValue ->
         onAnimalTypeChange(newValue)
+        onBreedChange("")
     }
+
+    val apiService = ApiService()
+    val context = LocalContext.current
+    val otherAnimal = remember { mutableStateOf("") }
+    val breedOpts = remember { mutableListOf<String>() }
+
+    if (pet.animalType == "Other") {
+        FormTextInput( "Animal", "e.g. Cheetah", otherAnimal.value ) { newName -> otherAnimal.value = newName }
+    } else {
+        LaunchedEffect(pet.animalType) {
+            when (pet.animalType) {
+                "Dog" -> fetchBreeds(apiService::fetchDogBreeds, breedOpts, context)
+                "Cat" -> fetchBreeds(apiService::fetchCatBreeds, breedOpts, context)
+            }
+        }
+        val breedSelection = pet.breed
+        // TODO: replace options with breeds from api
+        CardSelector(AppText.pet_breed, breedOpts, breedSelection, Modifier.card()) {
+                newValue ->
+            onBreedChange(newValue)
+        }
+    }
+
     val options2 = listOf("Breed 1", "Breed 2", "Breed 3","Breed 4")
-    val breedSelection = pet.breed
-    // TODO: replace options with breeds from api
-    CardSelector(AppText.pet_breed, options2, breedSelection, Modifier.card()) {
-            newValue ->
-        onBreedChange(newValue)
-    }
+}
+suspend fun fetchBreeds(
+    fetchFunction: suspend ((List<String>) -> Unit, (Exception) -> Unit) -> Unit,
+    breedOpts: MutableList<String>,
+    context: Context
+) {
+    fetchFunction(
+        { animalTypes ->  // onComplete
+            breedOpts.clear()
+            breedOpts.addAll(animalTypes)
+        },
+        { exception ->  // onError
+            Toast.makeText(
+                context,
+                "Failed to fetch types: ${exception.message}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    )
 }
