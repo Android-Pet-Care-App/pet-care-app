@@ -188,4 +188,4 @@ from the original requirements
 
 ## App Demo Video
 
-- Embed the YouTube/Vimeo link of your Completed Demo Day prep video
+https://github.com/Android-Pet-Care-App/pet-care-app/assets/17109419/4e225064-b778-49f1-a2ae-77331df0d6c1
